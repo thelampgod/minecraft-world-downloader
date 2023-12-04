@@ -7,6 +7,8 @@ import game.data.chunk.Chunk;
 import game.data.chunk.ChunkBinary;
 import game.data.dimension.Dimension;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +44,18 @@ public class Region {
 
         this.file = new McaFile(regionCoordinates);
         this.fileEntities = new McaFile(regionCoordinates, true);
+    }
+
+    public Region(String regionPath, CoordinateDim2D pos) throws IOException {
+        this.regionCoordinates = pos;
+        this.chunks = new ConcurrentHashMap<>();
+        this.updatedSinceLastWrite = false;
+        this.toDelete = ConcurrentHashMap.newKeySet();
+
+        String filename = "r." + pos.getX() + "." + pos.getZ() + ".mca";
+
+        this.file = new McaFile(new File(regionPath + "/region/" + filename));
+        this.fileEntities = new McaFile(new File(regionPath + "/entities/" + filename), true);
     }
 
     /**
@@ -173,6 +187,10 @@ public class Region {
 
     public McaFile getFile() {
         return file;
+    }
+
+    public McaFile getFileEntities() {
+        return fileEntities;
     }
 
     /**

@@ -253,6 +253,22 @@ public class McaFile {
         return res;
     }
 
+    public void addChunk(Chunk chunk, boolean isEntityFile) throws IOException {
+        Coordinate2D coordinate = chunk.location.stripDimension();
+        Map<Integer, ChunkBinary> chunkBinaryMap = new HashMap<>();
+        // get the chunk in binary format and get its coordinates as an Mca compatible integer. Then add
+        // these to the map of chunk binaries.
+        ChunkBinary binary = (isEntityFile ? ChunkBinary.entitiesFromChunk(chunk) : ChunkBinary.fromChunk(chunk));
+
+        Coordinate2D localCoordinate = coordinate.toRegionLocal();
+        int pos = 4 * ((localCoordinate.getX() & 31) + (localCoordinate.getZ() & 31) * 32);
+        if (binary != null) {
+            chunkBinaryMap.put(pos, binary);
+        }
+
+        this.chunkMap.putAll(chunkBinaryMap);
+
+    }
     public void addChunks(Map<Integer, ChunkBinary> chunkMap) {
         // merge new chunks into existing ones
         this.chunkMap.putAll(chunkMap);
