@@ -25,9 +25,20 @@ import java.util.stream.Stream;
 public class McaFile {
     public final static int SECTOR_SIZE = 4096;
     private HashMap<Integer, ChunkBinary> chunkMap;
-    private final Path filePath;
-    private final Coordinate2D regionLocation;
-    private final boolean isEntityFile;
+    private Path filePath;
+    private Coordinate2D regionLocation;
+    private boolean isEntityFile;
+
+    public static McaFile empty(File outputDir) {
+        McaFile file = new McaFile();
+        file.isEntityFile = false;
+
+        file.chunkMap = new HashMap<>();
+        file.filePath = Path.of(outputDir.getAbsolutePath());
+        String[] bits = outputDir.getName().split("\\.");
+        file.regionLocation = new Coordinate2D(Integer.parseInt(bits[1]), Integer.parseInt(bits[2]));
+        return file;
+    }
 
     public Coordinate2D getRegionLocation() {
         return regionLocation;
@@ -47,6 +58,9 @@ public class McaFile {
     }
     public McaFile(File file) throws IOException {
         this(file, false);
+    }
+
+    public McaFile() {
     }
 
     /**
