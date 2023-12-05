@@ -30,7 +30,7 @@ import se.llbit.nbt.Tag;
  * Manage entities and block entities for chunks.
  */
 public abstract class ChunkEntities extends ChunkEvents {
-    private final Map<Coordinate3D, SpecificTag> blockEntities;
+    public final Map<Coordinate3D, SpecificTag> blockEntities;
 
     public ChunkEntities() {
         super();
@@ -129,6 +129,10 @@ public abstract class ChunkEntities extends ChunkEvents {
      */
     protected void addBlockEntities(CompoundTag map) {
         map.add("block_entities", new ListTag(Tag.TAG_COMPOUND, new ArrayList<>(blockEntities.values())));
+    }
+
+    public Map<Coordinate3D, SpecificTag> getBlockEntities() {
+        return blockEntities;
     }
 
 

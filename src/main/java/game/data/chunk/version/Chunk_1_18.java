@@ -229,7 +229,17 @@ public class Chunk_1_18 extends Chunk_1_17 {
             int sectionY = section.get("Y").byteValue();
             setChunkSection(sectionY, parseSection(sectionY, section));
         });
+        parseBlockEntities(tag);
         parseHeightMaps(tag);
+    }
+
+    private void parseBlockEntities(Tag tag) {
+        tag.asCompound().get("block_entities").asList().forEach(blockEntity -> {
+            int x = blockEntity.get("x").intValue();
+            int y = blockEntity.get("y").intValue();
+            int z = blockEntity.get("z").intValue();
+            blockEntities.put(new Coordinate3D(x, y, z), blockEntity);
+        });
     }
 
     @Override
