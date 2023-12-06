@@ -9,16 +9,8 @@ import game.data.chunk.palette.SingleValuePalette;
 import game.data.coordinates.Coordinate3D;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import packets.builder.PacketBuilder;
-import se.llbit.nbt.ByteArrayTag;
-import se.llbit.nbt.ByteTag;
-import se.llbit.nbt.CompoundTag;
-import se.llbit.nbt.IntTag;
-import se.llbit.nbt.ListTag;
-import se.llbit.nbt.LongArrayTag;
-import se.llbit.nbt.SpecificTag;
-import se.llbit.nbt.Tag;
+import se.llbit.nbt.*;
 
 public class ChunkSection_1_18 extends ChunkSection_1_16 {
     long[] biomes;
@@ -40,7 +32,18 @@ public class ChunkSection_1_18 extends ChunkSection_1_16 {
 
         CompoundTag blockStates = nbt.get("block_states").asCompound();
         this.setBlocks(blockStates.get("data").longArray());
-        this.palette = new Palette(getDataVersion(), blockStates.get("palette").asList());
+        ListTag palette = blockStates.get("palette").asList();
+        palette.forEach(state -> {
+            CompoundTag tag = state.asCompound();
+            String blockName = tag.get("Name").stringValue();
+            if (blockName.contains("leaves") || blockName.contains("fence")) {
+                CompoundTag props = tag.get("Properties").asCompound();
+                if (props.get("waterlogged").isError()) {
+                    props.add(new NamedTag("waterlogged", new StringTag("false")));
+                }
+            }
+        });
+        this.palette = new Palette(getDataVersion(), palette);
 
         CompoundTag biomes = nbt.get("biomes").asCompound();
         this.biomePalette = Palette.biomes(getDataVersion(), biomes.get("palette").asList());
