@@ -58,14 +58,14 @@ public abstract class Chunk extends ChunkEntities {
         chunkSections = new ChunkSection[getMaxLightSection() - getMinLightSection() + 1];
     }
 
-    protected ChunkSection getChunkSection(int y) {
+    public ChunkSection getChunkSection(int y) {
         if (y < getMinLightSection()) { return null; }
         if (y > getMaxLightSection()) { return null; }
 
         return chunkSections[y - getMinLightSection()];
     }
 
-    protected void setChunkSection(int y, ChunkSection section) {
+    public void setChunkSection(int y, ChunkSection section) {
         if (y < getMinLightSection()) { return; }
         if (y > getMaxLightSection()) { return; }
 
@@ -88,7 +88,7 @@ public abstract class Chunk extends ChunkEntities {
         return 15;
     }
 
-    protected Iterable<ChunkSection> getAllSections() {
+    public Iterable<ChunkSection> getAllSections() {
         return () -> Arrays.stream(chunkSections).filter(Objects::nonNull).iterator();
     }
 
