@@ -9,6 +9,7 @@ import game.data.coordinates.Coordinate3D;
 import game.data.coordinates.CoordinateDim2D;
 import game.data.dimension.Dimension;
 import game.data.region.McaFile;
+import se.llbit.nbt.SpecificTag;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,10 +131,31 @@ public class WorldDiff {
                     c.setChunkSection(y, c.createNewChunkSection(y, Palette.empty()));
                 }
 
+                c.blockEntities = diff(c.getBlockEntities(), c2.getBlockEntities());
+
                 output.addChunk(c, false);
             }
         }
         return output;
+    }
+
+    private static Map<Coordinate3D, SpecificTag> diff(Map<Coordinate3D, SpecificTag> blockEntities1, Map<Coordinate3D, SpecificTag> blockEntities2) {
+        Set<Coordinate3D> entitiesToRemove = new HashSet<>();
+        for (Map.Entry<Coordinate3D, SpecificTag> entity : blockEntities1.entrySet()) {
+            if (compare(entity.getValue(), blockEntities2.get(entity.getKey()))) {
+                entitiesToRemove.add(entity.getKey());
+            }
+        }
+        entitiesToRemove.forEach(blockEntities1::remove);
+        return blockEntities1;
+    }
+
+    private static boolean compare(SpecificTag entity1, SpecificTag entity2) {
+        boolean stay = mode.equals(Mode.STAY);
+        if (entity2 == null) {
+            return stay;
+        }
+        return (stay == !(entity1.get("id").stringValue().equals(entity2.get("id").stringValue())));
     }
 
     private static boolean compare(int block1, int block2) {
