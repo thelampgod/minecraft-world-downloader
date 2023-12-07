@@ -107,6 +107,11 @@ public class WorldDiff {
                 CoordinateDim2D absoluteChunkPos = new CoordinateDim2D((regionLocation.getX() << 5) + cX, (regionLocation.getZ() << 5) + cY, Dimension.OVERWORLD);
                 Chunk c = chunks.get(absoluteChunkPos);
                 Chunk c2 = chunks2.get(absoluteChunkPos);
+
+                if (c == null || c2 == null) {
+                    continue;
+                }
+
                 Set<Byte> sectionsToRemove = new HashSet<>();
                 for (ChunkSection s : c.getAllSections()) {
                     if (c2.getChunkSection(s.getY()) == null) {
