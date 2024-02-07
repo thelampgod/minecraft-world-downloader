@@ -3,6 +3,8 @@ import game.data.WorldManager;
 import game.data.chunk.Chunk;
 import game.data.chunk.ChunkSection;
 import game.data.chunk.palette.Palette;
+import game.data.chunk.version.ChunkSection_1_18;
+import game.data.chunk.version.Chunk_1_17;
 import game.data.chunk.version.Chunk_1_18;
 import game.data.coordinates.Coordinate2D;
 import game.data.coordinates.Coordinate3D;
@@ -113,20 +115,32 @@ public class WorldDiff {
                 }
 
                 Set<Byte> sectionsToRemove = new HashSet<>();
-                for (ChunkSection s : c.getAllSections()) {
-                    if (c2.getChunkSection(s.getY()) == null) {
-                        if (mode.equals(Mode.STAY)) {
-                            sectionsToRemove.add(s.getY());
+                for (byte sectionY = -5; sectionY < 20; ++sectionY) {
+                    if (c.getChunkSection(sectionY) == null) {
+                        if (c2.getChunkSection(sectionY) == null) {
+                            continue;
+                        }
+
+                        if (mode.equals(Mode.ADD)) {
+                            c.setChunkSection(sectionY, c2.getChunkSection(sectionY));
                         }
                         continue;
                     }
-                    ChunkSection s2 = c2.getChunkSection(s.getY());
+
+                    if (c2.getChunkSection(sectionY) == null) {
+                        if (!mode.equals(Mode.DEL)) {
+                            sectionsToRemove.add(sectionY);
+                        }
+                        continue;
+                    }
+                    ChunkSection_1_18 s = (ChunkSection_1_18) c.getChunkSection(sectionY);
+                    ChunkSection_1_18 s2 = (ChunkSection_1_18) c2.getChunkSection(sectionY);
 
                     for (int y = 0; y < 16; ++y) {
                         for (int z = 0; z < 16; ++z) {
                             for (int x = 0; x < 16; ++x) {
                                 if (compare(s.getNumericBlockStateAt(x, y, z), s2.getNumericBlockStateAt(x, y, z))) {
-                                    s.setBlockAt(new Coordinate3D(x, y, z), 0);
+                                    s.setBlockAt(new Coordinate3D(x, y, z), 0); // air
                                 }
                             }
                         }
@@ -165,13 +179,23 @@ public class WorldDiff {
 
     private static boolean compare(int block1, int block2) {
         boolean stay = mode.equals(Mode.STAY);
-        if (!isLeaves(block1, block2)) {
-            return (stay == (block1 != block2));
+
+        if (isLeaves(block1, block2)) {
+            final boolean isEqual = Objects.equals(leafIdToLeafTypeMap.get(block1), leafIdToLeafTypeMap.get(block2));
+            return (stay != isEqual);
         }
-        final boolean isEqual = Objects.equals(leafIdToLeafTypeMap.get(block1), leafIdToLeafTypeMap.get(block2));
 
-        return (stay != isEqual);
+        if (isLiquid(block1, block2)) {
+            return !stay;
+        }
 
+        return (stay == (block1 != block2));
+    }
+
+    private static boolean isLiquid(int block1, int block2) {
+        boolean isWater = (block1 >= 80 && block1 <= 95) && (block2 >= 80 && block2 <= 95);
+        if (isWater) return true;
+        return (block1 >= 96 && block1 <= 111) && (block2 >= 96 && block2 <= 111);
     }
 
     private static final HashMap<Integer, Integer> leafIdToLeafTypeMap = new HashMap<>();
@@ -180,7 +204,7 @@ public class WorldDiff {
     }
 
     private static void setupWorld() {
-        Chunk_1_18.setWorldHeight(-63, 319);
+        Chunk_1_17.setWorldHeight(-63, 384);
         Config.setInstance(new Config());
         Config.setProtocolVersion(763);
         WorldManager man = new WorldManager();
