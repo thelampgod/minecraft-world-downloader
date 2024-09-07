@@ -1,11 +1,11 @@
 import config.Config;
+import config.Version;
 import game.data.WorldManager;
 import game.data.chunk.Chunk;
-import game.data.chunk.ChunkSection;
-import game.data.chunk.palette.Palette;
+import game.data.chunk.palette.SingleValuePalette;
 import game.data.chunk.version.ChunkSection_1_18;
 import game.data.chunk.version.Chunk_1_17;
-import game.data.chunk.version.Chunk_1_18;
+import game.data.chunk.version.Chunk_1_20;
 import game.data.coordinates.Coordinate2D;
 import game.data.coordinates.Coordinate3D;
 import game.data.coordinates.CoordinateDim2D;
@@ -107,34 +107,25 @@ public class WorldDiff {
         for (int cX = 0; cX < 32; ++cX) {
             for (int cY = 0; cY < 32; ++cY) {
                 CoordinateDim2D absoluteChunkPos = new CoordinateDim2D((regionLocation.getX() << 5) + cX, (regionLocation.getZ() << 5) + cY, Dimension.OVERWORLD);
-                Chunk c = chunks.get(absoluteChunkPos);
-                Chunk c2 = chunks2.get(absoluteChunkPos);
+                Chunk_1_20 c = (Chunk_1_20) chunks.get(absoluteChunkPos);
+                Chunk_1_20 c2 = (Chunk_1_20) chunks2.get(absoluteChunkPos);
 
                 if (c == null || c2 == null) {
                     continue;
                 }
 
-                Set<Byte> sectionsToRemove = new HashSet<>();
                 for (byte sectionY = -5; sectionY < 20; ++sectionY) {
-                    if (c.getChunkSection(sectionY) == null) {
-                        if (c2.getChunkSection(sectionY) == null) {
-                            continue;
-                        }
-
-                        if (mode.equals(Mode.ADD)) {
-                            c.setChunkSection(sectionY, c2.getChunkSection(sectionY));
-                        }
-                        continue;
-                    }
-
-                    if (c2.getChunkSection(sectionY) == null) {
-                        if (!mode.equals(Mode.DEL)) {
-                            sectionsToRemove.add(sectionY);
-                        }
-                        continue;
-                    }
                     ChunkSection_1_18 s = (ChunkSection_1_18) c.getChunkSection(sectionY);
                     ChunkSection_1_18 s2 = (ChunkSection_1_18) c2.getChunkSection(sectionY);
+                    if (s == null && s2 == null) continue;
+
+                    if (s == null) {
+                        s = (ChunkSection_1_18) c.createNewChunkSection(sectionY, new SingleValuePalette(0));
+                    }
+
+                    if (s2 == null) {
+                        s2 = (ChunkSection_1_18) c2.createNewChunkSection(sectionY, new SingleValuePalette(0));
+                    }
 
                     for (int y = 0; y < 16; ++y) {
                         for (int z = 0; z < 16; ++z) {
@@ -145,10 +136,9 @@ public class WorldDiff {
                             }
                         }
                     }
+                    c.setChunkSection(sectionY, s);
                 }
-                for (byte y : sectionsToRemove) {
-                    c.setChunkSection(y, c.createNewChunkSection(y, Palette.empty()));
-                }
+
 
                 c.blockEntities = diff(c.getBlockEntities(), c2.getBlockEntities());
 
@@ -199,6 +189,7 @@ public class WorldDiff {
     }
 
     private static final HashMap<Integer, Integer> leafIdToLeafTypeMap = new HashMap<>();
+
     private static boolean isLeaves(int block1, int block2) {
         return leafIdToLeafTypeMap.containsKey(block1) && leafIdToLeafTypeMap.containsKey(block2);
     }

@@ -23,7 +23,7 @@ import java.util.function.Function;
  * this was moved to a different packet. Also, a block count?
  */
 public class Chunk_1_14 extends Chunk_1_13 {
-    SpecificTag heightMap;
+    public SpecificTag heightMap;
 
     public Chunk_1_14(CoordinateDim2D location, int version) {
         super(location, version);

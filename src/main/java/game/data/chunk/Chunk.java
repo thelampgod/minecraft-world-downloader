@@ -34,10 +34,10 @@ public abstract class Chunk extends ChunkEntities {
     private final ChunkSection[] chunkSections;
     public CoordinateDim2D location;
     private Runnable afterParse;
-    private Runnable onUnload;
+    public Runnable onUnload;
     private boolean isNewChunk;
-    private boolean saved;
-    private ChunkImageFactory imageFactory;
+    public boolean saved;
+    public ChunkImageFactory imageFactory;
 
     public ChunkHeightHandler getChunkHeightHandler() {
         return chunkHeightHandler;
