@@ -1,12 +1,15 @@
 package game.data.chunk.palette;
 
 import game.data.WorldManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 
 import game.data.chunk.ChunkSection;
+
 import java.util.stream.Stream;
+
+import game.data.dimension.Biome;
+import game.data.dimension.BiomeRegistry;
 import packets.DataTypeProvider;
 import packets.builder.PacketBuilder;
 import se.llbit.nbt.ListTag;
@@ -51,7 +54,72 @@ public class Palette {
     }
 
     public void biomePalette() {
-        this.registry = WorldManager.getInstance().getDimensionRegistry().getBiomeRegistry();
+        Map<String, Biome> biomeMap = new HashMap<>();
+        biomeMap.put("minecraft:the_void", new Biome(0));
+        biomeMap.put("minecraft:plains", new Biome(1));
+        biomeMap.put("minecraft:sunflower_plains", new Biome(2));
+        biomeMap.put("minecraft:snowy_plains", new Biome(3));
+        biomeMap.put("minecraft:ice_spikes", new Biome(4));
+        biomeMap.put("minecraft:desert", new Biome(5));
+        biomeMap.put("minecraft:swamp", new Biome(6));
+        biomeMap.put("minecraft:mangrove_swamp", new Biome(7));
+        biomeMap.put("minecraft:forest", new Biome(8));
+        biomeMap.put("minecraft:flower_forest", new Biome(9));
+        biomeMap.put("minecraft:birch_forest", new Biome(10));
+        biomeMap.put("minecraft:dark_forest", new Biome(11));
+        biomeMap.put("minecraft:old_growth_birch_forest", new Biome(12));
+        biomeMap.put("minecraft:old_growth_pine_taiga", new Biome(13));
+        biomeMap.put("minecraft:old_growth_spruce_taiga", new Biome(14));
+        biomeMap.put("minecraft:taiga", new Biome(15));
+        biomeMap.put("minecraft:snowy_taiga", new Biome(16));
+        biomeMap.put("minecraft:savanna", new Biome(17));
+        biomeMap.put("minecraft:savanna_plateau", new Biome(18));
+        biomeMap.put("minecraft:windswept_hills", new Biome(19));
+        biomeMap.put("minecraft:windswept_gravelly_hills", new Biome(20));
+        biomeMap.put("minecraft:windswept_forest", new Biome(21));
+        biomeMap.put("minecraft:windswept_savanna", new Biome(22));
+        biomeMap.put("minecraft:jungle", new Biome(23));
+        biomeMap.put("minecraft:sparse_jungle", new Biome(24));
+        biomeMap.put("minecraft:bamboo_jungle", new Biome(25));
+        biomeMap.put("minecraft:badlands", new Biome(26));
+        biomeMap.put("minecraft:eroded_badlands", new Biome(27));
+        biomeMap.put("minecraft:wooded_badlands", new Biome(28));
+        biomeMap.put("minecraft:meadow", new Biome(29));
+        biomeMap.put("minecraft:cherry_grove", new Biome(30));
+        biomeMap.put("minecraft:grove", new Biome(31));
+        biomeMap.put("minecraft:snowy_slopes", new Biome(32));
+        biomeMap.put("minecraft:frozen_peaks", new Biome(33));
+        biomeMap.put("minecraft:jagged_peaks", new Biome(34));
+        biomeMap.put("minecraft:stony_peaks", new Biome(35));
+        biomeMap.put("minecraft:river", new Biome(36));
+        biomeMap.put("minecraft:frozen_river", new Biome(37));
+        biomeMap.put("minecraft:beach", new Biome(38));
+        biomeMap.put("minecraft:snowy_beach", new Biome(39));
+        biomeMap.put("minecraft:stony_shore", new Biome(40));
+        biomeMap.put("minecraft:warm_ocean", new Biome(41));
+        biomeMap.put("minecraft:lukewarm_ocean", new Biome(42));
+        biomeMap.put("minecraft:deep_lukewarm_ocean", new Biome(43));
+        biomeMap.put("minecraft:ocean", new Biome(44));
+        biomeMap.put("minecraft:deep_ocean", new Biome(45));
+        biomeMap.put("minecraft:cold_ocean", new Biome(46));
+        biomeMap.put("minecraft:deep_cold_ocean", new Biome(47));
+        biomeMap.put("minecraft:frozen_ocean", new Biome(48));
+        biomeMap.put("minecraft:deep_frozen_ocean", new Biome(49));
+        biomeMap.put("minecraft:mushroom_fields", new Biome(50));
+        biomeMap.put("minecraft:dripstone_caves", new Biome(51));
+        biomeMap.put("minecraft:lush_caves", new Biome(52));
+        biomeMap.put("minecraft:deep_dark", new Biome(53));
+        biomeMap.put("minecraft:nether_wastes", new Biome(54));
+        biomeMap.put("minecraft:warped_forest", new Biome(55));
+        biomeMap.put("minecraft:crimson_forest", new Biome(56));
+        biomeMap.put("minecraft:soul_sand_valley", new Biome(57));
+        biomeMap.put("minecraft:basalt_deltas", new Biome(58));
+        biomeMap.put("minecraft:the_end", new Biome(59));
+        biomeMap.put("minecraft:end_highlands", new Biome(60));
+        biomeMap.put("minecraft:end_midlands", new Biome(61));
+        biomeMap.put("minecraft:small_end_islands", new Biome(62));
+        biomeMap.put("minecraft:end_barrens", new Biome(63));
+        this.registry = new BiomeRegistry(biomeMap);
         this.type = PaletteType.BIOMES;
     }
 
