@@ -130,7 +130,11 @@ public class WorldDiff {
                     for (int y = 0; y < 16; ++y) {
                         for (int z = 0; z < 16; ++z) {
                             for (int x = 0; x < 16; ++x) {
-                                if (compare(s.getNumericBlockStateAt(x, y, z), s2.getNumericBlockStateAt(x, y, z))) {
+                                try {
+                                    if (compare(s.getNumericBlockStateAt(x, y, z), s2.getNumericBlockStateAt(x, y, z))) {
+                                        s.setBlockAt(new Coordinate3D(x, y, z), 0); // air
+                                    }
+                                } catch (IllegalArgumentException e) {
                                     s.setBlockAt(new Coordinate3D(x, y, z), 0); // air
                                 }
                             }

@@ -112,15 +112,19 @@ public abstract class ChunkSection {
         return -1;
     }
 
-    public int getNumericBlockStateAt(int x, int y, int z) {
+    public int getNumericBlockStateAt(int x, int y, int z) throws IllegalArgumentException {
         return palette.stateFromId(getPaletteIndex(x, y, z));
     }
 
-    public int getPaletteIndex(int x, int y, int z) {
+    public int getPaletteIndex(int x, int y, int z) throws IllegalArgumentException {
         return getPaletteIndex(x, y, z, palette.getBitsPerBlock());
     }
 
-    private synchronized int getPaletteIndex(int x, int y, int z, int bitsPerBlock) {
+    private synchronized int getPaletteIndex(int x, int y, int z, int bitsPerBlock) throws IllegalArgumentException {
+        if (blocks == null) {
+            throw new IllegalArgumentException("Block array is null XD");
+        }
+
         if (blocks.length == 0 || bitsPerBlock == 0) {
             return 0;
         }
